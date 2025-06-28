@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Our Body Works - Interactive Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f0f8ff; padding: 20px; text-align: center; }
+    .question-card { background: white; border-radius: 10px; padding: 20px; max-width: 600px; margin: 0 auto 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    button { display: block; width: 100%; margin: 10px 0; padding: 10px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background-color: #87ceeb; color: white; transition: background-color 0.3s; }
+    button:hover { background-color: #4682b4; }
+    .correct { background-color: #32cd32 !important; }
+    .wrong { background-color: #ff6347 !important; }
+    #result { font-weight: bold; font-size: 18px; margin-top: 20px; }
+    #image-container { margin-bottom: 20px; }
+    #image-container img { max-width: 300px; height: auto; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <h1>Let's Learn How Our Body Works!</h1>
+  <div id="image-container">
+    <img id="question-image" src="" alt="Body Image">
+  </div>
+  <div class="question-card" id="quiz">
+    <p id="question">Loading...</p>
+    <div id="answers"></div>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does the brain do?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/5/58/Human_Brain_Front_and_Side_views.svg",
+        answers: shuffle([
+          { text: "Controls the body", correct: true },
+          { text: "Pumps blood", correct: false },
+          { text: "Moves muscles", correct: false }
+        ])
+      },
+      {
+        question: "Which organ helps you breathe?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Respiratory_system_complete_en.svg",
+        answers: shuffle([
+          { text: "Lungs", correct: true },
+          { text: "Stomach", correct: false },
+          { text: "Heart", correct: false }
+        ])
+      },
+      {
+        question: "What organ pumps blood?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/9/94/Diagram_of_the_human_heart_%28cropped%29.svg",
+        answers: shuffle([
+          { text: "Heart", correct: true },
+          { text: "Liver", correct: false },
+          { text: "Brain", correct: false }
+        ])
+      },
+      {
+        question: "Which system includes bones and muscles?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Muscular_system_diagram_en.svg",
+        answers: shuffle([
+          { text: "Skeletal and muscular system", correct: true },
+          { text: "Digestive system", correct: false },
+          { text: "Respiratory system", correct: false }
+        ])
+      },
+      {
+        question: "Which food is rich in protein?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/f/fc/Food_pyramid.svg",
+        answers: shuffle([
+          { text: "Chicken", correct: true },
+          { text: "Candy", correct: false },
+          { text: "Soda", correct: false }
+        ])
+      },
+      {
+        question: "Which nutrient gives you energy for sports?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Carbohydrates_example.png",
+        answers: shuffle([
+          { text: "Carbohydrates", correct: true },
+          { text: "Vitamins", correct: false },
+          { text: "Water", correct: false }
+        ])
+      },
+      {
+        question: "What should you drink during exercise?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Glass_of_Water.JPG",
+        answers: shuffle([
+          { text: "Water", correct: true },
+          { text: "Soda", correct: false },
+          { text: "Juice", correct: false }
+        ])
+      },
+      {
+        question: "Which food helps keep bones strong?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/0/08/Milk_glass.jpg",
+        answers: shuffle([
+          { text: "Milk", correct: true },
+          { text: "Chips", correct: false },
+          { text: "Cake", correct: false }
+        ])
+      },
+      {
+        question: "Why is exercise important?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Physical_fitness.png",
+        answers: shuffle([
+          { text: "It keeps the body healthy", correct: true },
+          { text: "It makes you tired", correct: false },
+          { text: "It replaces sleep", correct: false }
+        ])
+      },
+      {
+        question: "Which of these is a healthy habit?",
+        image: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Fruit_apple.jpg",
+        answers: shuffle([
+          { text: "Eating fruits and vegetables", correct: true },
+          { text: "Eating junk food", correct: false },
+          { text: "Skipping breakfast", correct: false }
+        ])
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function showQuestion() {
+      const questionElement = document.getElementById("question");
+      const answersElement = document.getElementById("answers");
+      const imageElement = document.getElementById("question-image");
+
+      answersElement.innerHTML = "";
+      const currentQuestion = questions[currentQuestionIndex];
+      questionElement.textContent = currentQuestion.question;
+      imageElement.src = currentQuestion.image;
+
+      currentQuestion.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.textContent = answer.text;
+        button.onclick = () => selectAnswer(button, answer.correct);
+        answersElement.appendChild(button);
+      });
+    }
+
+    function selectAnswer(selectedButton, isCorrect) {
+      const buttons = document.querySelectorAll("#answers button");
+      buttons.forEach(button => {
+        const correct = questions[currentQuestionIndex].answers.find(a => a.text === button.textContent).correct;
+        button.classList.add(correct ? "correct" : "wrong");
+        button.disabled = true;
+      });
+
+      if (isCorrect) score++;
+
+      setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          showQuestion();
+        } else {
+          document.getElementById("quiz").style.display = "none";
+          document.getElementById("image-container").style.display = "none";
+          document.getElementById("result").textContent = `You scored ${score} out of ${questions.length}! Great job!`;
+        }
+      }, 1500);
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
